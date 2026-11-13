@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Officers Cleared or Inconclusive? | CMSC471</title>
+  <meta
+    name="description"
+    content="Two interactive visualizations examining how the framing of police complaint outcomes changes their interpretation."
+  >
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="js/script.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="page-header">
+    <div class="container">
+      <p class="eyebrow">CMSC471 · Assignment 2</p>
+
+      <h1>Officers Cleared or Inconclusive?</h1>
+
+      <p class="intro">
+        One dataset. Two stories.
+        Explore how grouping, language, and visual emphasis can change
+        what investigation outcomes appear to mean.
+      </p>
+
+      <nav aria-label="Page sections">
+        <a href="#white-hat">White hat</a>
+        <a href="#black-hat">Black hat</a>
+        <a href="#development">Project details</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+
+    <section class="panel overview" aria-labelledby="overview-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Start with the denominator</p>
+          <h2 id="overview-title">What is being counted?</h2>
+        </div>
+        <span class="tag">Historical ProPublica release · July 2020</span>
+      </div>
+
+      <p>
+        The charts count <strong>allegation records</strong>.
+        One complaint can contain multiple allegations, and one officer can
+        appear in many records. These units are not interchangeable.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <span id="record-count" class="stat-number">—</span>
+          <span>Allegation records</span>
+        </div>
+
+        <div class="stat">
+          <span id="complaint-count" class="stat-number">—</span>
+          <span>Distinct complaint IDs</span>
+        </div>
+
+        <div class="stat">
+          <span id="officer-count" class="stat-number">—</span>
+          <span>Distinct officer IDs</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel controls-panel" aria-labelledby="controls-title">
+      <h2 id="controls-title">Explore the same records</h2>
+
+      <fieldset id="controls" disabled>
+        <legend class="sr-only">Chart controls</legend>
+
+        <div class="controls">
+          <label>
+            Allegation category
+            <select id="category-filter">
+              <option value="All categories">All categories</option>
+            </select>
+          </label>
+
+          <label>
+            White hat measurement
+            <select id="view-mode">
+              <option value="percent">Percentage within category</option>
+              <option value="count">Number of records</option>
+            </select>
+          </label>
+
+          <button id="reset-button" type="button" class="secondary-button">
+            Reset comparison
+          </button>
+        </div>
+      </fieldset>
+
+      <p id="filter-note" class="small-text">Waiting for data.</p>
+      <p id="status" class="status" role="status" aria-live="polite">
+        Loading data/allegations.csv…
+      </p>
+
+      <p id="selection-announcement" class="sr-only" aria-live="polite"></p>
+    </section>
+
+    <div id="visualizations" hidden>
+      <section id="white-hat" class="panel" aria-labelledby="white-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">01 · White hat</p>
+            <h2 id="white-title">
+              How were allegations resolved in this published dataset?
+            </h2>
+          </div>
+
+          <span class="tag">Preserve the distinctions</span>
+        </div>
+
+        <p class="section-description">
+          Compare investigation outcomes within each allegation category.
+          An inconclusive finding remains separate from a finding that
+          conduct complied with department rules.
+        </p>
+
+        <div
+          id="white-legend"
+          class="legend"
+          aria-label="White hat outcome legend"
+        ></div>
+
+        <figure>
+          <div class="chart-frame">
+            <div id="white-chart" class="chart"></div>
+          </div>
+
+          <figcaption id="white-chart-caption"></figcaption>
+        </figure>
+
+        <p class="interaction-hint">
+          Hover over a segment for exact values.
+        </p>
+
+        <div class="definition-grid">
+          <div>
+            <h3>Substantiated</h3>
+            <p>The conduct occurred and violated department rules.</p>
+          </div>
+
+          <div>
+            <h3>Unsubstantiated</h3>
+            <p>
+              Investigators could not establish both that the conduct occurred
+              and that it violated rules.
+            </p>
+          </div>
+
+          <div>
+            <h3>Exonerated</h3>
+            <p>The conduct occurred but did not violate department rules.</p>
+          </div>
+        </div>
+
+        <details class="data-details">
+            <summary>Inspect the values behind the charts</summary>
+
+            <div class="table-scroll">
+                <table>
+
+                <thead>
+                    <tr>
+                    <th scope="col">Category</th>
+                    <th scope="col">Substantiated</th>
+                    <th scope="col">Unsubstantiated</th>
+                    <th scope="col">Exonerated</th>
+                    <th scope="col">Other / missing</th>
+                    <th scope="col">Total</th>
+                    </tr>
+                </thead>
+
+                <tbody id="data-body"></tbody>
+                </table>
+            </div>
+        </details>
+
+        <p id="quality-note" class="scope-note"></p>
+
+        <article class="writeup" aria-labelledby="white-writeup-title">
+          <p class="eyebrow">Write-up</p>
+          <h3 id="white-writeup-title">Communicating what the records establish</h3>
+
+          <p>
+            This visualization uses ProPublica’s July 2020 release of civilian
+            complaint records obtained from New York City’s Civilian Complaint
+            Review Board. The unit of analysis is a row in the published
+            allegation data, rather than a unique complaint, officer, or police
+            encounter. This distinction matters because several allegation
+            records can belong to the same complaint. The visualization
+            therefore identifies its counting unit explicitly and provides
+            separate counts of distinct complaint and officer identifiers.
+          </p>
+
+          <p>
+            Records are grouped by allegation category and investigation outcome.
+            Substantiated outcomes with different disciplinary recommendations
+            are combined under “Substantiated.” Unsubstantiated and exonerated
+            outcomes remain separate because they represent different findings.
+            Unrecognized or missing outcomes are retained in an additional
+            category instead of silently removed. The percentage view divides
+            each outcome count by all included records in its allegation
+            category. The count view uses the same records and a shared,
+            zero-based scale.
+          </p>
+
+          <p>
+            Horizontal stacked bars support comparisons across categories.
+            Consistent colors, direct percentage labels, sample sizes,
+            definitions, and tooltips help readers interpret the marks.
+            Percentage bars make composition visible, while the count toggle
+            reveals differences in recorded volume that equally long
+            percentage bars would otherwise conceal. The accompanying table
+            provides exact counts and rounded percentages.
+          </p>
+
+          <p>
+            Transparency also requires limits. This release selects officers
+            who had at least one substantiated allegation and excludes certain
+            records. Complaint reporting, investigation, and publication
+            processes shape what appears in the data. The charts describe this
+            published collection; they do not measure the probability that an
+            officer commits misconduct, establish whether every allegation is
+            true, or estimate department-wide misconduct rates.
+          </p>
+        </article>
+      </section>
+
+      <section id="black-hat" class="panel black-section" aria-labelledby="black-section-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">02 · Black hat</p>
+            <h2 id="black-section-title">The same evidence, a different impression</h2>
+          </div>
+
+          <span class="tag">Intentionally misleading example</span>
+        </div>
+
+        <p class="section-description">
+          Analyze the visualization first. Then reveal how its story is constructed.
+        </p>
+
+        <div id="black-card" class="black-card">
+          <h3 id="black-title">
+            Most misconduct claims end with officers cleared
+          </h3>
+
+          <p id="black-subtitle" class="black-subtitle">
+            A reassuring picture of investigation outcomes across misconduct
+            categories.
+          </p>
+
+          <div class="black-kpi-block">
+            <span id="black-kpi" class="black-kpi">—</span>
+
+            <div>
+              <strong id="black-kpi-label">Officers cleared</strong>
+              <p id="black-kpi-detail">
+                A combined outcome measure across the displayed categories.
+              </p>
+            </div>
+          </div>
+
+          <div
+            id="black-legend"
+            class="legend"
+            aria-label="Black hat outcome legend"
+          ></div>
+
+          <figure>
+            <div class="chart-frame">
+              <div id="black-chart" class="chart"></div>
+            </div>
+
+            <figcaption class="black-footnote">
+              Source: ProPublica / CCRB historical release. “Cleared” combines
+              unsubstantiated and exonerated allegation records. Selected officer
+              population; shares are calculated from allegation records.
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="reveal-controls">
+          <button
+            id="reveal-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="reveal-panel"
+            disabled
+          >
+            Reveal the framing
+          </button>
+
+          <p class="small-text">
+            The source records and category selection stay the same.
+          </p>
+        </div>
+
+        <div id="reveal-panel" class="reveal-panel" hidden>
+          <h3>What changed—and what did not</h3>
+
+          <ol>
+            <li>
+              <strong>The combined category is split.</strong>
+              Unsubstantiated findings are no longer presented as equivalent
+              to exoneration.
+            </li>
+            <li>
+              <strong>The denominator is corrected in the label.</strong>
+              The large percentage describes allegation records, not officers.
+            </li>
+            <li>
+              <strong>The headline stops implying innocence.</strong>
+              Investigation uncertainty is made explicit.
+            </li>
+          </ol>
+
+          <p>
+            The large percentage remains unchanged because it is still the sum
+            of the same two outcome groups. Its meaning changes when the label
+            and context are corrected.
+          </p>
+        </div>
+
+        <article class="writeup" aria-labelledby="black-writeup-title">
+          <p class="eyebrow">Write-Up</p>
+          <h3 id="black-writeup-title">Turning uncertainty into reassurance</h3>
+
+          <p>
+            The black hat visualization uses the same allegation records and
+            category filter as the white hat view. Its main manipulation is
+            semantic aggregation: it combines unsubstantiated and exonerated
+            outcomes into a single category called “Cleared.” This grouping
+            makes a lack of sufficient evidence appear equivalent to a finding
+            that conduct complied with department rules. Although the combined
+            count is arithmetically correct, the invented category encourages
+            a conclusion that the original outcome definitions do not support.
+          </p>
+
+          <p>
+            A second manipulation changes the apparent unit of analysis.
+            The prominent “Officers cleared” label describes a percentage
+            calculated from allegation records, not a percentage of unique
+            officers. Officers can appear repeatedly, so an allegation-level
+            share cannot be interpreted as an officer-level clearance rate.
+            The headline reinforces this interpretation by presenting
+            investigation outcomes as evidence of clearance rather than
+            distinguishing uncertainty from exoneration.
+          </p>
+
+          <p>
+            Visual emphasis supports the misleading narrative. The combined
+            category receives a bright, reassuring color and a large summary
+            statistic, while substantiated outcomes are muted. A restrained
+            dashboard layout, familiar percentage axis, sample sizes, and
+            source attribution make the display appear credible. A small
+            methodological footnote technically discloses the grouping but
+            competes poorly with the headline and dominant statistic. The
+            selected historical population also receives less prominence
+            inside the dashboard than its broad framing would warrant.
+          </p>
+
+          <p>
+            These choices demonstrate deception through data transformation,
+            titles and labels, and visual emphasis without changing individual
+            source values. The reveal interaction restores separate outcome
+            categories and corrects the denominator language while preserving
+            the underlying records. This comparison shows why accurate
+            arithmetic alone does not guarantee an honest visualization:
+            readers also need appropriate categories, counting units, and
+            contextual limits.
+          </p>
+        </article>
+      </section>
+    </div>
+
+    <section
+      id="development"
+      class="panel"
+      aria-labelledby="development-title"
+    >
+      <p class="eyebrow">Project documentation</p>
+      <h2 id="development-title">References, development, and AI use</h2>
+
+      <h3>References</h3>
+
+      <ul class="references">
+        <li>
+          <a
+            href="https://projects.propublica.org/datastore/#civilian-complaints-against-new-york-city-police-officers"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ProPublica: Civilian Complaints Against New York City Police Officers
+          </a>
+          — the July 2020 dataset and accompanying field documentation.
+        </li>
+
+        <li>
+          <a
+            href="https://d3js.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            D3.js
+          </a>
+          — the JavaScript library used to construct the interactive charts.
+        </li>
+      </ul>
+
+      <hr>
+
+      <h3>Development process and team contributions</h3>
+
+      <p>
+        The application uses HTML, CSS, and a single JavaScript file.
+        Shared data preparation functions group the allegation records
+        by category and investigation outcome. Both visualizations use
+        the same selected records, allowing readers to compare how
+        different grouping and labeling choices change their interpretation.
+      </p>
+
+      <p>
+        Development focused on interpreting the outcome definitions,
+        implementing the contrasting visualizations, and connecting
+        the category filter, measurement toggle, tooltips, and framing
+        reveal. The white hat view preserves the original outcome
+        distinctions, while the black hat view deliberately combines
+        outcomes and changes their apparent meaning.
+      </p>
+
+      <hr>
+
+      <h3>AI usage and reflection</h3>
+
+      <p>
+        ChatGPT helped explore the white hat and black hat narratives, 
+        and generate the initial HTML, CSS, and JavaScript. It also suggested the framing
+        reveal as a way to demonstrate how aggregation and labels influence interpretation.
+      </p>
+
+      <hr>
+
+      <h3>Extra credit features</h3>
+
+      <p>
+        <strong>1. Reveal the framing:</strong> 
+        The “Reveal the framing” interaction transforms the black hat
+        visualization into a more transparent presentation using the
+        same records. It separates the misleading “Cleared” category
+        into unsubstantiated and exonerated outcomes, corrects the
+        allegation-versus-officer label, and replaces the reassuring
+        headline with an explanation of investigation uncertainty.
+        The combined percentage remains unchanged, demonstrating that
+        the same arithmetic can support different impressions depending
+        on its presentation. This feature extends the two required
+        visualizations by allowing readers to inspect the manipulation
+        directly rather than only reading about it.
+      </p>
+
+      <p>
+        <strong>2. Coordinated Category Filtering Across Both Visualizations:</strong>
+        A shared category selector updates both charts, summary statistics, and the
+        results table together. Readers can investigate whether the misleading
+        narrative holds across different allegation categories while comparing the 
+        same subset of records. This extends the required comparison into an interactive exploration.
+      </p>
+
+      <p>
+        <strong>3. Percentage and Count Comparison:</strong>
+        The white hat visualization switches between percentages and absolute 
+        counts using the same records. Percentage views reveal outcome composition, 
+        while counts expose differences in sample size that equally long percentage 
+        bars conceal. This supports the project’s ethical focus by demonstrating 
+        how the measurement chosen affects interpretation.
+      </p>
+
+      <p>
+        <strong>4. Inspectable Aggregate Results Table:</strong>
+        An expandable table displays exact outcome counts, percentages, and category
+        totals for the current selection. It updates with the category filter and includes 
+        outcomes too small to label inside the chart. This adds an inspection layer beyond 
+        chart tooltips, allowing readers to examine the numerical evidence behind both presentations.
+      </p>
+
+    </section>
+  </main>
+
+  <footer class="container page-footer">
+    <p>CMSC471 · White Hat / Black Hat Visualization</p>
+  </footer>
+
+  <div id="tooltip" class="tooltip" hidden></div>
+</body>
+</html>
