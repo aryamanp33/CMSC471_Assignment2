@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Officers Cleared or Inconclusive? | CMSC471</title>
+  <title>Police Compliance Outcomes | CMSC471</title>
   <meta
     name="description"
     content="Two interactive visualizations examining how the framing of police complaint outcomes changes their interpretation."
@@ -20,19 +20,9 @@
     <div class="container">
       <p class="eyebrow">CMSC471 · Assignment 2</p>
 
-      <h1>Officers Cleared or Inconclusive?</h1>
+      <h1>Police Compliance Outcomes</h1>
 
-      <p class="intro">
-        One dataset. Two stories.
-        Explore how grouping, language, and visual emphasis can change
-        what investigation outcomes appear to mean.
-      </p>
 
-      <nav aria-label="Page sections">
-        <a href="#white-hat">White hat</a>
-        <a href="#black-hat">Black hat</a>
-        <a href="#development">Project details</a>
-      </nav>
     </div>
   </header>
 
@@ -41,17 +31,12 @@
     <section class="panel overview" aria-labelledby="overview-title">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Start with the denominator</p>
           <h2 id="overview-title">What is being counted?</h2>
         </div>
-        <span class="tag">Historical ProPublica release · July 2020</span>
+
       </div>
 
-      <p>
-        The charts count <strong>allegation records</strong>.
-        One complaint can contain multiple allegations, and one officer can
-        appear in many records. These units are not interchangeable.
-      </p>
+
 
       <div class="stats">
         <div class="stat">
@@ -99,7 +84,6 @@
         </div>
       </fieldset>
 
-      <p id="filter-note" class="small-text">Waiting for data.</p>
       <p id="status" class="status" role="status" aria-live="polite">
         Loading data/allegations.csv…
       </p>
@@ -113,18 +97,13 @@
           <div>
             <p class="eyebrow">01 · White hat</p>
             <h2 id="white-title">
-              How were allegations resolved in this published dataset?
+              Investigation Outcomes by Category
             </h2>
           </div>
 
-          <span class="tag">Preserve the distinctions</span>
+
         </div>
 
-        <p class="section-description">
-          Compare investigation outcomes within each allegation category.
-          An inconclusive finding remains separate from a finding that
-          conduct complied with department rules.
-        </p>
 
         <div
           id="white-legend"
@@ -140,29 +119,7 @@
           <figcaption id="white-chart-caption"></figcaption>
         </figure>
 
-        <p class="interaction-hint">
-          Hover over a segment for exact values.
-        </p>
 
-        <div class="definition-grid">
-          <div>
-            <h3>Substantiated</h3>
-            <p>The conduct occurred and violated department rules.</p>
-          </div>
-
-          <div>
-            <h3>Unsubstantiated</h3>
-            <p>
-              Investigators could not establish both that the conduct occurred
-              and that it violated rules.
-            </p>
-          </div>
-
-          <div>
-            <h3>Exonerated</h3>
-            <p>The conduct occurred but did not violate department rules.</p>
-          </div>
-        </div>
 
         <details class="data-details">
             <summary>Inspect the values behind the charts</summary>
@@ -186,53 +143,24 @@
             </div>
         </details>
 
-        <p id="quality-note" class="scope-note"></p>
 
-        <article class="writeup" aria-labelledby="white-writeup-title">
-          <p class="eyebrow">Write-up</p>
-          <h3 id="white-writeup-title">Communicating what the records establish</h3>
+        <article class="writeup">
+          <p class="eyebrow">White Hat Write-Up</p>
 
           <p>
-            This visualization uses ProPublica’s July 2020 release of civilian
-            complaint records obtained from New York City’s Civilian Complaint
-            Review Board. The unit of analysis is a row in the published
-            allegation data, rather than a unique complaint, officer, or police
-            encounter. This distinction matters because several allegation
-            records can belong to the same complaint. The visualization
-            therefore identifies its counting unit explicitly and provides
-            separate counts of distinct complaint and officer identifiers.
+            The visualization above uses ProPublica’s release of the civilian complaint records from New York City’s Civilian Complaint Review Board and the analysis is done using a row in the published allegation data because several allegation records can belong to the same complaint. Therefore, the visual above identifies the separate counts of unique complaints and officers.
           </p>
 
           <p>
-            Records are grouped by allegation category and investigation outcome.
-            Substantiated outcomes with different disciplinary recommendations
-            are combined under “Substantiated.” Unsubstantiated and exonerated
-            outcomes remain separate because they represent different findings.
-            Unrecognized or missing outcomes are retained in an additional
-            category instead of silently removed. The percentage view divides
-            each outcome count by all included records in its allegation
-            category. The count view uses the same records and a shared,
-            zero-based scale.
+            Records from the data are grouped by the category of the allegation and the investigation outcome in the chart encoded by the different colored bars. Outcomes having different disciplinary recommendations are under “substantiated,” and the unsubstantiated and exonerated outcomes remain separate. Unrecognized/Missing outcomes are stored in an additional category instead of outright removed from the dataset. The percentage view helps divide each outcome count by total records within its same allegation category. The count view uses the same records, but starting from 0, so the information is presented uniformly.
           </p>
 
           <p>
-            Horizontal stacked bars support comparisons across categories.
-            Consistent colors, direct percentage labels, sample sizes,
-            definitions, and tooltips help readers interpret the marks.
-            Percentage bars make composition visible, while the count toggle
-            reveals differences in recorded volume that equally long
-            percentage bars would otherwise conceal. The accompanying table
-            provides exact counts and rounded percentages.
+            Horizontal stacked bars help support the comparisons across the different outcome categories. Colors and exact percentages help display the information of the dataset in a clear manner. Percentage bars also are used to make the composition visible, while the count shows the differences in recorded volume that percentage bars may not be as noticeable. The dropdown table also is used to provide exact counts and rounded percentages from the ProPublic dataset.
           </p>
 
           <p>
-            Transparency also requires limits. This release selects officers
-            who had at least one substantiated allegation and excludes certain
-            records. Complaint reporting, investigation, and publication
-            processes shape what appears in the data. The charts describe this
-            published collection; they do not measure the probability that an
-            officer commits misconduct, establish whether every allegation is
-            true, or estimate department-wide misconduct rates.
+            This method likely introduces bias because officers without any substantiated allegations are excluded, so the outcomes may differ across the entire police department.
           </p>
         </article>
       </section>
@@ -241,34 +169,25 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">02 · Black hat</p>
-            <h2 id="black-section-title">The same evidence, a different impression</h2>
+            <h2 id="black-section-title">Officer Clearance Overview</h2>
           </div>
 
           <span class="tag">Intentionally misleading example</span>
         </div>
 
-        <p class="section-description">
-          Analyze the visualization first. Then reveal how its story is constructed.
-        </p>
 
         <div id="black-card" class="black-card">
           <h3 id="black-title">
-            Most misconduct claims end with officers cleared
+            Officer Clearance Outcomes
           </h3>
 
-          <p id="black-subtitle" class="black-subtitle">
-            A reassuring picture of investigation outcomes across misconduct
-            categories.
-          </p>
 
           <div class="black-kpi-block">
             <span id="black-kpi" class="black-kpi">—</span>
 
             <div>
               <strong id="black-kpi-label">Officers cleared</strong>
-              <p id="black-kpi-detail">
-                A combined outcome measure across the displayed categories.
-              </p>
+              <p id="black-kpi-detail"></p>
             </div>
           </div>
 
@@ -299,12 +218,10 @@
             aria-controls="reveal-panel"
             disabled
           >
-            Reveal the framing
+            Uncover Bias
           </button>
 
-          <p class="small-text">
-            The source records and category selection stay the same.
-          </p>
+
         </div>
 
         <div id="reveal-panel" class="reveal-panel" hidden>
@@ -333,53 +250,23 @@
           </p>
         </div>
 
-        <article class="writeup" aria-labelledby="black-writeup-title">
-          <p class="eyebrow">Write-Up</p>
-          <h3 id="black-writeup-title">Turning uncertainty into reassurance</h3>
+        <article class="writeup">
+          <p class="eyebrow">Black-Hat Write-Up</p>
 
           <p>
-            The black hat visualization uses the same allegation records and
-            category filter as the white hat view. Its main manipulation is
-            semantic aggregation: it combines unsubstantiated and exonerated
-            outcomes into a single category called “Cleared.” This grouping
-            makes a lack of sufficient evidence appear equivalent to a finding
-            that conduct complied with department rules. Although the combined
-            count is arithmetically correct, the invented category encourages
-            a conclusion that the original outcome definitions do not support.
+            The black hat visualization uses the same ProPublica data as the white hat visual but uses semantic aggregation, which combines unsubstantiated and exonerated outcomes, which are different, into a single category called “Cleared.” This grouping causes the lack of sufficient evidence to appear as equivalent to finding that the officer’s conduct complied with the department’s rules. Although the combined count is technically correct, the newly created category pushes a conclusion that the white hat does not agree with.
           </p>
 
           <p>
-            A second manipulation changes the apparent unit of analysis.
-            The prominent “Officers cleared” label describes a percentage
-            calculated from allegation records, not a percentage of unique
-            officers. Officers can appear repeatedly, so an allegation-level
-            share cannot be interpreted as an officer-level clearance rate.
-            The headline reinforces this interpretation by presenting
-            investigation outcomes as evidence of clearance rather than
-            distinguishing uncertainty from exoneration.
+            A second manipulation changes what the visualization appears to count. The “Officers Cleared” group represents a percentage from the allegation records, not a percentage of unique officers in the department. Because one officer can appear in multiple allegation records, the percentage of allegations shouldn’t be treated as the percentage of officers cleared. The headline also presents the outcomes as evidence of clearance rather than separating uncertainty from exoneration.
           </p>
 
           <p>
-            Visual emphasis supports the misleading narrative. The combined
-            category receives a bright, reassuring color and a large summary
-            statistic, while substantiated outcomes are muted. A restrained
-            dashboard layout, familiar percentage axis, sample sizes, and
-            source attribution make the display appear credible. A small
-            methodological footnote technically discloses the grouping but
-            competes poorly with the headline and dominant statistic. The
-            selected historical population also receives less prominence
-            inside the dashboard than its broad framing would warrant.
+            The combined category uses a bright teal color and a large summary statistic in the header, while the substantiated groups&#x27; outcomes appear in gray, which hides its significance. The percent axis, sample size, and source attribution make the display appear credible even though there is misleading grouping and labels.
           </p>
 
           <p>
-            These choices demonstrate deception through data transformation,
-            titles and labels, and visual emphasis without changing individual
-            source values. The reveal interaction restores separate outcome
-            categories and corrects the denominator language while preserving
-            the underlying records. This comparison shows why accurate
-            arithmetic alone does not guarantee an honest visualization:
-            readers also need appropriate categories, counting units, and
-            contextual limits.
+            At the bottom, the “Uncover Bias” button separates the combined outcomes and corrects the label to identify the allegation records rather than officers, making the results very similar to the white hat chart. The underlying counts remain unchanged, showing how accurate calculations can still cause misinterpretation when categories and labels suggest an unsupported conclusion.
           </p>
         </article>
       </section>
@@ -407,16 +294,6 @@
           — the July 2020 dataset and accompanying field documentation.
         </li>
 
-        <li>
-          <a
-            href="https://d3js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            D3.js
-          </a>
-          — the JavaScript library used to construct the interactive charts.
-        </li>
       </ul>
 
       <hr>
@@ -434,8 +311,7 @@
       <p>
         Development focused on interpreting the outcome definitions,
         implementing the contrasting visualizations, and connecting
-        the category filter, measurement toggle, tooltips, and framing
-        reveal. The white hat view preserves the original outcome
+        the category filter, measurement toggle, tooltips, and uncovering bias. The white hat view preserves the original outcome
         distinctions, while the black hat view deliberately combines
         outcomes and changes their apparent meaning.
       </p>
@@ -445,9 +321,15 @@
       <h3>AI usage and reflection</h3>
 
       <p>
-        ChatGPT helped explore the white hat and black hat narratives, 
-        and generate the initial HTML, CSS, and JavaScript. It also suggested the framing
-        reveal as a way to demonstrate how aggregation and labels influence interpretation.
+        Throughout this lab our group used AI to help with idea generation, debugging, style, and ensuring a clear write-up report. For the white-hat, and black-hat for the police compliance dataset, we used AI to confirm our idea of using the black-hat to falsely show cleared officers would be an effective tool to show how visualizations would be misleading.
+      </p>
+
+      <p>
+        Furthermore, when running into errors with the horizontal bar charts and overall HTML formatting CodeEx helped us debug. Also to make the overall webpage look neat, CodeEx did a great job styling the colors and formatting the information in a digestible manner.
+      </p>
+
+      <p>
+        Lastly, ChatGPT was used some parts of the write up to reduce grammatical errors and confirm our report clearly stated our objectives and visualizations for both parts.
       </p>
 
       <hr>
@@ -455,51 +337,24 @@
       <h3>Extra credit features</h3>
 
       <p>
-        <strong>1. Reveal the framing:</strong> 
-        The “Reveal the framing” interaction transforms the black hat
-        visualization into a more transparent presentation using the
-        same records. It separates the misleading “Cleared” category
-        into unsubstantiated and exonerated outcomes, corrects the
-        allegation-versus-officer label, and replaces the reassuring
-        headline with an explanation of investigation uncertainty.
-        The combined percentage remains unchanged, demonstrating that
-        the same arithmetic can support different impressions depending
-        on its presentation. This feature extends the two required
-        visualizations by allowing readers to inspect the manipulation
-        directly rather than only reading about it.
+        <strong>Uncover Bias:</strong> The “Uncover Bias” button transforms the black hat visualization into a more transparent presentation using the same records. It separates the misleading “Cleared” category into unsubstantiated and exonerated outcomes, corrects the allegation-versus-officer label, and replaces the reassuring headline with an explanation of investigation uncertainty. This feature extends the two required visualizations by allowing readers to inspect the manipulation directly rather than only reading about it.
       </p>
 
       <p>
-        <strong>2. Coordinated Category Filtering Across Both Visualizations:</strong>
-        A shared category selector updates both charts, summary statistics, and the
-        results table together. Readers can investigate whether the misleading
-        narrative holds across different allegation categories while comparing the 
-        same subset of records. This extends the required comparison into an interactive exploration.
+        <strong>Category Filtering:</strong> A category selector updates both charts, summary statistics, and the results table together. This allows the visual to be more interactive and users can dive deeper into specific variables more.
       </p>
 
       <p>
-        <strong>3. Percentage and Count Comparison:</strong>
-        The white hat visualization switches between percentages and absolute 
-        counts using the same records. Percentage views reveal outcome composition, 
-        while counts expose differences in sample size that equally long percentage 
-        bars conceal. This supports the project’s ethical focus by demonstrating 
-        how the measurement chosen affects interpretation.
+        <strong>Percentage and Count Comparison:</strong> The white hat visualization switches between percentages and absolute counts using the same records. Percentage views reveal outcome composition, while counts expose differences in sample size that equally long percentage bars conceal. This demonstrates how the measurement can affect interpretation of a visual.
       </p>
 
       <p>
-        <strong>4. Inspectable Aggregate Results Table:</strong>
-        An expandable table displays exact outcome counts, percentages, and category
-        totals for the current selection. It updates with the category filter and includes 
-        outcomes too small to label inside the chart. This adds an inspection layer beyond 
-        chart tooltips, allowing readers to examine the numerical evidence behind both presentations.
+        <strong>Results Table:</strong> An expandable table displays exact outcome counts, percentages, and category totals for the current selection. This allows the viewers of the page to see exact data that the visualizations are based off of.
       </p>
 
     </section>
   </main>
 
-  <footer class="container page-footer">
-    <p>CMSC471 · White Hat / Black Hat Visualization</p>
-  </footer>
 
   <div id="tooltip" class="tooltip" hidden></div>
 </body>

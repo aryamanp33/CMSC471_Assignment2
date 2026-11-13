@@ -1,6 +1,5 @@
 "use strict";
 
-// Shared definitions keep the two views tied to the same source records.
 const OUTCOMES = [
   "Substantiated",
   "Unsubstantiated",
@@ -49,15 +48,10 @@ const state = {
 
 const percent = (n, total) => total ? 100 * n / total : 0;
 
-// --------------------------------------------------
-// Data preparation and validation
-// --------------------------------------------------
 
 function normalizeDisposition(value) {
   const s = String(value ?? "").trim().toLowerCase();
 
-  // Group disciplinary recommendations under the shared finding.
-  // The word boundary prevents matching "unsubstantiated".
   if (/^substantiated(?:\b|\s*\()/.test(s)) {
     return "Substantiated";
   }
@@ -81,7 +75,6 @@ function prepareRows(rows) {
     disposition:
       normalizeDisposition(row.board_disposition),
 
-    // Keep identifiers as strings.
     complaint:
       String(row.complaint_id ?? "").trim(),
 
@@ -171,9 +164,6 @@ function auditData(rows, groups) {
   });
 }
 
-// --------------------------------------------------
-// Tooltips: mouse and keyboard
-// --------------------------------------------------
 
 function tooltipLines(node, lines, event) {
   const tip = $("tooltip");
@@ -249,16 +239,11 @@ function addInteraction(selection, linesFor) {
     });
 }
 
-// --------------------------------------------------
-// Segment construction
-// --------------------------------------------------
 
 function segmentsFor(group, black) {
   let keys = OUTCOMES;
   const counts = {...group.counts};
 
-  // Intentional black hat transformation.
-  // The source rows and denominator do not change.
   if (black && !state.reveal) {
     counts.Cleared =
       counts.Unsubstantiated + counts.Exonerated;
@@ -287,9 +272,6 @@ function segmentsFor(group, black) {
   });
 }
 
-// --------------------------------------------------
-// SVG charts
-// --------------------------------------------------
 
 function drawChart(targetId, groups, black) {
   const root = d3.select(`#${targetId}`);
@@ -311,7 +293,6 @@ function drawChart(targetId, groups, black) {
     groups.length * rowHeight +
     margin.bottom;
 
-  // The measurement control affects only the white hat chart.
   const countMode =
     !black && state.mode === "count";
 
@@ -352,7 +333,6 @@ function drawChart(targetId, groups, black) {
   const yBottom =
     margin.top + groups.length * rowHeight;
 
-  // Grid lines.
   svg.append("g")
     .attr("class", "grid")
     .attr("transform", `translate(0,${yBottom})`)
@@ -364,7 +344,6 @@ function drawChart(targetId, groups, black) {
     )
     .call(g => g.select(".domain").remove());
 
-  // Shared, zero-based measurement axis.
   svg.append("g")
     .attr("class", "axis")
     .attr("transform", `translate(0,${yBottom})`)
@@ -455,8 +434,6 @@ function drawChart(targetId, groups, black) {
         : DEFINITIONS[d.key]
     ]);
 
-    // Avoid forcing labels into segments that are too narrow.
-    // All values remain available in the tooltip and data table.
     const labeledSegments = segments.filter(d =>
       position(d.end) - position(d.start) >= 54
     );
@@ -520,9 +497,6 @@ function drawLegend(targetId, black) {
   });
 }
 
-// --------------------------------------------------
-// Accessible values table
-// --------------------------------------------------
 
 function updateTable(groups) {
   const tbody = $("data-body");
@@ -553,9 +527,6 @@ function updateTable(groups) {
   });
 }
 
-// --------------------------------------------------
-// Update all views from one selected set of rows
-// --------------------------------------------------
 
 function render() {
   hideTooltip();
@@ -585,15 +556,11 @@ function render() {
     ).size
   );
 
-  $("filter-note").textContent =
-    `Showing ${state.category.toLowerCase()}: ${fmt.format(rows.length)} of ${fmt.format(allRows.length)} loaded allegation records. The category filter applies to both views and the table.`;
-
   $("white-chart-caption").textContent =
     state.mode === "percent"
-      ? "Each bar totals 100%. Sample sizes differ; use the count view to compare recorded volume. Labels are rounded to one decimal."
+      ? ""
       : "Bar lengths show allegation record counts on a shared zero-based scale.";
 
-  // Pooled percentage: sum records first, then divide.
   const combined =
     totals.Unsubstantiated + totals.Exonerated;
 
@@ -605,29 +572,21 @@ function render() {
       ? "Unsubstantiated + exonerated allegation records"
       : "Officers cleared";
 
-  // Avoid a literal majority claim if a selected category
-  // happens to have a combined share at or below 50%.
   $("black-title").textContent =
     state.reveal
-      ? "An inconclusive finding is not an officer clearance"
-      : combined > rows.length / 2
-        ? "Most misconduct claims end with officers cleared"
-        : "Investigation outcomes point to officer clearance";
+      ? "Investigation Outcomes"
+      : "Officer Clearance Outcomes";
 
-  $("black-subtitle").textContent =
-    state.reveal
-      ? "The same records, with their original outcome distinctions restored."
-      : "A reassuring picture of investigation outcomes across misconduct categories.";
 
   $("black-kpi-detail").textContent =
     state.reveal
       ? `${fmt.format(combined)} of ${fmt.format(rows.length)} allegation records. This is not a percentage of officers.`
-      : "A combined outcome measure across the displayed categories.";
+      : "";
 
   $("reveal-button").textContent =
     state.reveal
-      ? "Restore misleading framing"
-      : "Reveal the framing";
+      ? "Restore Bias"
+      : "Uncover Bias";
 
   $("reveal-button").setAttribute(
     "aria-expanded",
@@ -649,16 +608,12 @@ function render() {
 
   updateTable(groups);
 
-  $("status").textContent =
-    `Loaded ${fmt.format(allRows.length)} records`;
+  $("status").hidden = true;
 
   $("selection-announcement").textContent =
-    `${state.category}. ${fmt.format(rows.length)} allegation records. ${state.reveal ? "Framing revealed." : "Black hat framing active."}`;
+    `${state.category}. ${fmt.format(rows.length)} allegation records. ${state.reveal ? "Bias uncovered." : "Black hat bias active."}`;
 }
 
-// --------------------------------------------------
-// Initialization and error handling
-// --------------------------------------------------
 
 async function init() {
   try {
@@ -707,21 +662,6 @@ async function init() {
       select.append(option);
     });
 
-    const other = allRows.filter(
-      row => row.disposition === "Other / missing"
-    ).length;
-
-    const missingComplaint = allRows.filter(
-      row => !row.complaint
-    ).length;
-
-    const missingOfficer = allRows.filter(
-      row => !row.officer
-    ).length;
-
-    $("quality-note").textContent =
-      `No loaded records are discarded or deduplicated. Other/missing outcomes: ${fmt.format(other)}. Missing complaint IDs: ${fmt.format(missingComplaint)}. Missing officer IDs: ${fmt.format(missingOfficer)}. Unique-ID counts omit blank IDs. Only four fields are used for these aggregate views; names are not displayed.`;
-
     select.addEventListener("change", () => {
       state.category = select.value;
       render();
@@ -757,6 +697,7 @@ async function init() {
     console.error(error);
 
     $("visualizations").hidden = true;
+    $("status").hidden = false;
     $("status").classList.add("error");
 
     $("status").textContent =
